@@ -1,0 +1,28 @@
+# Network Setting
+network:
+  # address to listen
+  listen_address: ":443"
+  # forward to
+  remote_port: 443
+
+# destination hostname setting
+# please comment in least one option
+# Please look README for further infomation
+allow_rule:
+  # IPv4 record
+  ipv4_addr:
+    # - "127.0.0.1/8"
+
+  # Domain whitelist
+  domain:
+    plain:
+      # - "example.com"
+    regex:
+      # - '^.*\.?example\.com\.?$'
+
+# Buffer size for Client Hello packet
+# You don't have to change this usually
+handshake_buffer: 4096
+
+# Enable debug log
+debug: false
