@@ -26,7 +26,7 @@ allow_rule:
     plain:
       # - "example.com"
     regex:
-      # - '^.*\.?example\.com\.?$'
+      # - '^(.*\.)?example\.com\.?$'
 
 deny_rule:
   # Add them your local network if you don't want to access your local network
