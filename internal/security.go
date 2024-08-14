@@ -2,15 +2,14 @@ package internal
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"net"
+	"net/netip"
 	"sync"
 
 	"github.com/ozraru/v4v6tlsproxy/internal/logw"
 )
-
-var whitelistCache = make(map[string]bool)
-var whitelistCacheMutex = &sync.RWMutex{}
 
 func IsAllowed(ctx context.Context, name string) bool {
 	if isWhitelisted(name) {
@@ -25,14 +24,30 @@ func IsAllowed(ctx context.Context, name string) bool {
 	}
 
 	for _, record := range addrs {
-		for _, self := range Config.AllowRule.IPv4Addr {
-			if self.Contains(record) {
+		for _, rule := range Config.AllowRule.IPv4Addr {
+			if rule.Contains(record) {
 				return true
 			}
 		}
 	}
 	return false
 }
+
+func IsDenied(addr *net.IPAddr) bool {
+	ipnetAddr, ok := netip.AddrFromSlice(addr.IP)
+	if !ok {
+		log.Panic("Failed to convert remote ip")
+	}
+	for _, rule := range Config.DenyRule.IPv6Addr {
+		if rule.Contains(ipnetAddr) {
+			return true
+		}
+	}
+	return false
+}
+
+var whitelistCache = make(map[string]bool)
+var whitelistCacheMutex = &sync.RWMutex{}
 
 func IsWhitelisted(name string) bool {
 	whitelistCacheMutex.RLock()
